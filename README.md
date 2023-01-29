@@ -1,66 +1,64 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Application Description
 
-## About Laravel
+This is a simple scraper developed for a test. The task was:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Retrieve all packages for a given url and print them out in json format from a terminal.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The retrieved products should contain `title`, `description`, `price` and `discount`.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+#### Assumptions made
+- If any of the required fields do not exist, an empty string will be returned.
+- The description is considered the text within the element with `package-description` class.
+- Price is shown without the currency character.
+- Price is shown per year, independently of whether the price was listed as monthly or annually.
+- If the product does not contain the string `year` in its title, then it will be automatically assumed to be paid monthly
+    and its price calculated accordingly.
+- Discount field will only show the numerical value (without the remaining string text) and without the currency character. 
+- If no products are found, an empty json result will be returned.
 
-## Learning Laravel
+#### Files of interest for this exercise
+For ease of access here is the list of files that was created by myself and not related to the existing framework.
+- [config/scraper.php](config/scraper.php)
+- [app/Helpers/Utils.php](app/Helpers/Utils.php)
+- [app/Scrapers/DnsSystemsScraper.php](app/Scrapers/DnsSystemsScraper.php)
+- [app/Console/Commands/DnsScrapeProductsCommand.php](app/Console/Commands/DnsScrapeProductsCommand.php)
+- [tests/Unit/UtilsTest.php](tests/Unit/UtilsTest.php)
+- [tests/Feature/ScraperTest.php](tests/Feature/ScraperTest.php)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Requirements
+- **[PHP 8.1](https://www.php.net/) and above.**
+- **[Composer](https://getcomposer.org/) package manager.**
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+After cloning the git repository, navigate into the newly created folder and run:
 
-## Laravel Sponsors
+```
+composer install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Usage
 
-### Premium Partners
+```
+php artisan dns-systems:scrape-products
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+The above will return a json representation of all the packages found ordered by highest price first.
 
-## Contributing
+<img src="command-result.png" alt="Command Result">
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Run tests
+```
+php artisan test
+```
+Alternatively you can run:
+```
+./vendor/bin/phpunit
+```
+<img src="test-result.png" alt="Test Results">
 
-## Code of Conduct
+## Composer Dependencies
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **[Laravel framework](https://laravel.com). Version 9.**
+- **[Goutte](https://github.com/dweidner/laravel-goutte). A thin wrapper for Laravel that uses [Symfony DomCrawler](https://symfony.com/doc/current/components/dom_crawler.html).**
